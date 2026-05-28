@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,17 +13,37 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { fields } from '@/constants';
+import auth from '@/routes/auth';
+import type { FormDataInterface } from '@/types/form';
 
 const AuthPage = () => {
     const [step, setStep] = useState<'login' | 'register'>('login');
+    const currentStep = step.charAt(0).toUpperCase() + step.slice(1);
+    const [showPass, setShowPass] = useState<boolean>(false);
+    const { post, data, setData } = useForm<FormDataInterface>({
+        email: '',
+        password: '',
+        name: '',
+        confirm_password: '',
+    });
+
+    const handleLogin = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        post(auth.login.post().url);
+    };
+
+    const handleRegister = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        post(auth.register.post().url);
+    };
 
     return (
         <div className="flex h-dvh items-center justify-center">
             <Card className="min-w-md">
                 <CardHeader>
-                    <CardTitle>
-                        {step.charAt(0).toUpperCase() + step.slice(1)}
-                    </CardTitle>
+                    <CardTitle>{currentStep}</CardTitle>
                     <CardDescription>
                         {step === 'login'
                             ? 'Enter your credentials to continue.'
@@ -44,18 +64,24 @@ const AuthPage = () => {
                 </CardHeader>
 
                 <CardContent>
-                    <form>
+                    <form
+                        onSubmit={
+                            step === 'login' ? handleLogin : handleRegister
+                        }
+                    >
                         <FieldGroup>
                             {fields[step].map((field) => (
-                                <>
-                                    <Field key={field.id}>
+                                <div key={field.id}>
+                                    <Field>
                                         <div className="flex items-center justify-between">
                                             <FieldLabel htmlFor={field.id}>
                                                 {field.label}
                                             </FieldLabel>
                                             {field.hasAction && (
                                                 <Button variant="link" asChild>
-                                                    <Link>Forgot password</Link>
+                                                    <Link href="/forgot-password">
+                                                        Forgot password?
+                                                    </Link>
                                                 </Button>
                                             )}
                                         </div>
@@ -63,6 +89,19 @@ const AuthPage = () => {
                                             name={field.id}
                                             id={field.id}
                                             placeholder={field.placeholder}
+                                            type={
+                                                showPass &&
+                                                field.type === 'password'
+                                                    ? 'text'
+                                                    : field.type
+                                            }
+                                            onChange={(e) =>
+                                                setData(
+                                                    field.id,
+                                                    e.target.value,
+                                                )
+                                            }
+                                            value={data[field.id]}
                                         />
                                         {((step === 'login' &&
                                             field.id === 'password') ||
@@ -70,17 +109,23 @@ const AuthPage = () => {
                                                 field.id ===
                                                     'confirm_password')) && (
                                             <Field orientation="horizontal">
-                                                <Checkbox id="show_pass" />
+                                                <Checkbox
+                                                    defaultChecked={showPass}
+                                                    id="show_pass"
+                                                    onCheckedChange={(
+                                                        val: boolean,
+                                                    ) => setShowPass(val)}
+                                                />
                                                 <FieldLabel htmlFor="show_pass">
                                                     Show password
                                                 </FieldLabel>
                                             </Field>
                                         )}
                                     </Field>
-                                </>
+                                </div>
                             ))}
                             <Field>
-                                <Button type="submit">Submit</Button>
+                                <Button type="submit">{currentStep}</Button>
                             </Field>
                         </FieldGroup>
                     </form>

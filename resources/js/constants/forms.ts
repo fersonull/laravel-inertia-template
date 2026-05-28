@@ -1,9 +1,11 @@
-export const fields = {
+import type { FieldsInterface } from '@/types/form';
+
+export const fields: FieldsInterface = {
     login: [
         {
             id: 'email',
             label: 'Email',
-            type: 'email',
+            type: 'text',
             placeholder: 'johndoe@example.com',
             hasAction: false,
         },
@@ -20,14 +22,14 @@ export const fields = {
         {
             id: 'name',
             label: 'Name',
-            type: 'name',
+            type: 'text',
             placeholder: 'John Doe',
             hasAction: false,
         },
         {
             id: 'email',
             label: 'Email',
-            type: 'email',
+            type: 'text',
             placeholder: 'johndoe@example.com',
             hasAction: false,
         },
@@ -41,7 +43,7 @@ export const fields = {
         {
             id: 'confirm_password',
             label: 'Confirm password',
-            type: 'confirm_password',
+            type: 'password',
             placeholder: '',
             hasAction: false,
         },
