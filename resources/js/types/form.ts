@@ -2,7 +2,7 @@ export interface FormDataInterface {
     email: string;
     password: string;
     name: string;
-    confirm_password: string;
+    password_confirmation: string;
 }
 
 export interface FieldsInterface {

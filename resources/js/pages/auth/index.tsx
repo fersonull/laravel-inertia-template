@@ -10,7 +10,12 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+    Field,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { fields } from '@/constants';
 import auth from '@/routes/auth';
@@ -20,12 +25,14 @@ const AuthPage = () => {
     const [step, setStep] = useState<'login' | 'register'>('login');
     const currentStep = step.charAt(0).toUpperCase() + step.slice(1);
     const [showPass, setShowPass] = useState<boolean>(false);
-    const { post, data, setData } = useForm<FormDataInterface>({
+    const { post, data, setData, errors } = useForm<FormDataInterface>({
         email: '',
         password: '',
         name: '',
-        confirm_password: '',
+        password_confirmation: '',
     });
+
+    console.log(errors);
 
     const handleLogin = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -103,11 +110,16 @@ const AuthPage = () => {
                                             }
                                             value={data[field.id]}
                                         />
+                                        {errors[field.id] && (
+                                            <FieldError>
+                                                {errors[field.id]}
+                                            </FieldError>
+                                        )}
                                         {((step === 'login' &&
                                             field.id === 'password') ||
                                             (step === 'register' &&
                                                 field.id ===
-                                                    'confirm_password')) && (
+                                                    'password_confirmation')) && (
                                             <Field orientation="horizontal">
                                                 <Checkbox
                                                     defaultChecked={showPass}

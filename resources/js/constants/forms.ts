@@ -41,7 +41,7 @@ export const fields: FieldsInterface = {
             hasAction: false,
         },
         {
-            id: 'confirm_password',
+            id: 'password_confirmation',
             label: 'Confirm password',
             type: 'password',
             placeholder: '',
